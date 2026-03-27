@@ -293,7 +293,7 @@ initialize Lean.registerBuiltinAttribute {
   applicationTime := .afterTypeChecking
 }
 
-syntax (name := FormalProof_attr) "formal_proof" &"using" formalProofKind &"at" str : attr
+syntax (name := FormalProof_attr) "formal_proof" &"using" formalProofKind (&"at" str)? : attr
 
 /-- Records the existence and location of a formal proof for a statement.
 

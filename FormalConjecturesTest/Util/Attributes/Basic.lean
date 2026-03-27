@@ -50,7 +50,7 @@ theorem a_graduate_problem_with_formal_proof : 1 + 1 = 2 := by
   rfl
 
 #guard_msgs in
-@[category test, formal_proof using formal_conjectures at ""]
+@[category test, formal_proof using formal_conjectures]
 theorem a_test_with_formal_proof : 3 + 3 = 6 := by
   rfl
 
