@@ -19,7 +19,7 @@ module
 public import Mathlib.Algebra.Polynomial.Bivariate
 public import Mathlib.RingTheory.Algebraic.Pi
 
-@[expose] public section
+@[expose] public noncomputable section
 
 /-!
 # Algebra over the Ring of Polynomials
@@ -38,6 +38,16 @@ variable {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
 /-- #TODO:  Generalize the following lemma to `CommSemiring`. -/
 @[simp] lemma aeval_polynomial_pi (p : R[X][X]) (f : S → S) (x : S) :
     p.aeval f x = aevalAeval x (f x) p := by
-  simp [instAlgebraPi, aeval, eval₂, sum]
+  induction p using Polynomial.induction_on' with
+  | add => simp [*]
+  | monomial n q =>
+  simp only [aeval_monomial, Pi.mul_apply, Pi.pow_apply, aevalAevalEquiv_apply_apply,
+    algebraMap_def, coe_mapRingHom, eval_mul, eval_map_algebraMap, eval_pow, eval_C]
+  induction q using Polynomial.induction_on' with
+  | add => simp [add_mul, *]
+  | monomial n p =>
+  unfold instAlgebraPi
+  simp
+
 
 end Polynomial
