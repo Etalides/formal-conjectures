@@ -31,11 +31,11 @@ variable {R S : Type*} [CommSemiring R] [CommSemiring S] [Algebra R S]
 namespace Polynomial
 
 instance instAlgebraPi : Algebra R[X] (S → S) :=
-  (Pi.ringHom fun x ↦ (Polynomial.aeval x).toRingHom).toAlgebra
+  (Pi.ringHom fun s ↦ (Polynomial.aeval s).toRingHom).toAlgebra
 
-variable {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
+@[simp]
+lemma algebraMap_algebraPi (p : R[X]) (s : S) : algebraMap R[X] (S → S) p s = aeval s p := rfl
 
-/-- #TODO:  Generalize the following lemma to `CommSemiring`. -/
 @[simp] lemma aeval_polynomial_pi (p : R[X][X]) (f : S → S) (x : S) :
     p.aeval f x = aevalAeval x (f x) p := by
   induction p using Polynomial.induction_on' with
@@ -45,9 +45,6 @@ variable {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
     algebraMap_def, coe_mapRingHom, eval_mul, eval_map_algebraMap, eval_pow, eval_C]
   induction q using Polynomial.induction_on' with
   | add => simp [add_mul, *]
-  | monomial n p =>
-  unfold instAlgebraPi
-  simp
-
+  | monomial n p => simp
 
 end Polynomial
