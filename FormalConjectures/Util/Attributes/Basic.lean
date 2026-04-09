@@ -50,7 +50,10 @@ Provides information about the existence of a formal proof for a statement.
 This is independent of the category attribute and can be used with any category.
 
 ### Values
-- `@[formal_proof using formal_conjectures at "link"]` : formally proved in this repository.
+### Values
+- `@[formal_proof using formal_conjectures]` : formally proved in this repository.
+- `@[formal_proof using formal_conjectures at "link"]` : formally proved in this repository
+  at the specified link.
 - `@[formal_proof using lean4 at "link"]` : formally proved in Lean 4 elsewhere.
 - `@[formal_proof using other_system at "link"]` : formally proved in another system
   (Roqc, Isabelle, Lean 3, HOL, etc.)
@@ -299,7 +302,8 @@ syntax (name := FormalProof_attr) "formal_proof" &"using" formalProofKind (&"at"
 
 This is independent of the `category` attribute and can be used with any category.
 
-Usage: `@[formal_proof using <kind> at "<link>"]` where `<kind>` is one of:
+Usage: `@[formal_proof using <kind> at "<link>"]` where `at "<link>"` is optional and  `<kind>`
+is one of:
 - `formal_conjectures` : formally proved in this repository.
 - `lean4` : formally proved in Lean 4 elsewhere (e.g. Mathlib).
 - `other_system` : formally proved in another formal system (Roqc, Isabelle, Lean 3, HOL, etc.) -/
@@ -308,7 +312,7 @@ initialize Lean.registerBuiltinAttribute {
   descr := "Annotation of the existence and location of a formal proof."
   add := fun decl stx _attrKind => do
     match stx with
-    | `(attr| formal_proof using $kind at $link) => do
+    | `(attr| formal_proof using $kind $[at $link]?) => do
       let some n := formalProofKind.toName kind | throwUnsupportedSyntax
       let pfKind ← Lean.Meta.MetaM.run' <|
         unsafe Meta.evalExpr FormalProofKind q(FormalProofKind) (.const n [])
@@ -321,6 +325,7 @@ initialize Lean.registerBuiltinAttribute {
         logWarning
           "A `formal_proof` annotation on a `research open` problem is suspicious. \
            If a formal proof exists, the problem should not be categorised as `open`."
+      let link := link.getD ⟨.mkStrLit ""⟩
       addFormalProofEntry decl pfKind link.getString
     | _ => throwUnsupportedSyntax
   applicationTime := .afterTypeChecking
